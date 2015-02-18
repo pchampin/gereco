@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"></meta>
+    <title>REST-Console</title>
+    <style type="text/css">
+      @import url("gereco.css");
+      @import url("theme.css");
+    </style>
+  </head>
+  <body>
+
+    <input id="addressbar">
+    <div>
+
+      <span id="method" class="combo">
+        <input placeholder="GET" disabled>
+        <select>
+          <option>GET</option>
+          <option>PUT</option>
+          <option>POST</option>
+          <option>DELETE</option>
+          <option value="custom">custom</option>
+        </select>
+      </span>
+
+      <span id="ctype" class="combo">
+        <input placeholder="*/*" disabled>
+        <select>
+          <option>*/*</option>
+          <option>application/json</option>
+          <option>application/xml</option>
+          <option>text/html</option>
+          <option>text/plain</option>
+          <option>text/turtle</option>
+          <option value="custom">custom</option>
+        </select>
+      </span>
+
+      <button id="send">Send</button>
+
+    </div>
+
+    <textarea id="payload" disabled></textarea>
+
+    <pre id="response"></pre>
+
+    <table id="response-headers"></table>
+
+    <script type="application/javascript" 
+            src="gereco.js"></script>
+
+  </body>
+</html>

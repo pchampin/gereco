@@ -1,0 +1,28 @@
+#response {
+    transition: all .3s;
+    border: 1px solid gray;
+    background-color: lightYellow;
+    padding: .5em;
+}
+
+#response.loading {
+    border-color: darkGrey;
+    background-color: lightGrey;
+    color: darkGrey;
+}
+
+#response.error {
+    border: 1px solid red;
+    background-color: lightPink;
+    color: red;
+}
+
+#response a {
+    text-decoration: none;
+}
+
+
+
+#response-headers th {
+    text-align: left;
+}
