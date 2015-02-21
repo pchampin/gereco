@@ -65,14 +65,6 @@
         }
 
 
-        var LOADING_NEXT = {
-            "": "loading |",
-            "loading |": "loading /",
-            "loading /": "loading —",
-            "loading —": "loading \\",
-            "loading \\": "loading |"
-        };
-
         function sendRequest(evt) {
             if (!evt) evt = {};
             if (evt.forceget) {
@@ -120,10 +112,10 @@
             response.textContent = "";
             response.classList.remove("error");
             response.classList.add("loading");
+            response.textContent = "loading...";
             responseHeaders.innerHTML = "";
 
             req.onreadystatechange = function() {
-                response.textContent = LOADING_NEXT[response.textContent];
                 if (req.readyState === 2) {
 
                     // display response headers
@@ -164,6 +156,8 @@
                             updateCtypeSelect(ctype.split(";", 1)[0]);
                         }
                     }
+                } else if (req.readyState === 3) {
+                    response.textContent = req.responseText;
                 } else if (req.readyState === 4) {
                     document.title = "REST Console - " + addressbar.value;
                     response.classList.remove("loading");

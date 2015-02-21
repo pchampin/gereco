@@ -8,7 +8,7 @@
 #response.loading {
     border-color: darkGrey;
     background-color: lightGrey;
-    color: darkGrey;
+    color: black;
 }
 
 #response.error {
