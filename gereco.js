@@ -125,27 +125,45 @@
             req.onreadystatechange = function() {
                 response.textContent = LOADING_NEXT[response.textContent];
                 if (req.readyState === 2) {
-                    etag = null;
+
+                    // display response headers
                     req.getAllResponseHeaders().split("\n").forEach(function(rh) {
                         if (!rh) return;
                         var match = /([^:]+): *(.*)/.exec(rh);
                         var key = match[1];
                         var val = match[2];
+
+                        var row = responseHeaders.appendChild(document.createElement("tr"));
+                        var th = row.appendChild(document.createElement("th"));
+                        var td = row.appendChild(document.createElement("td"));
+
+                        th.textContent = key;
+
+                        // custom presentation of some header fields
                         if (/location/i.test(key) || /link/i.test(key)) {
-                            val = '<a href="' + val + '">' + val + '</a>';
-                        }
-                        if (Math.floor(req.status / 100) === 2) {
-                            if (/etag/i.test(key)) {
-                                etag = val;
+                            var linka = td.appendChild(document.createElement("a"));
+                            if (val[0] === "<") {
+                                linka.href = val.substr(1).split(">", 1)[0];
+                            } else {
+                                linka.href = val;
                             }
-                            if (/content-type/i.test(key)) {
-                                updateCtypeSelect(val.split(";", 1)[0]);
-                            }
+                            linka.textContent = val;
+                        } else {
+                            td.textContent = val;
                         }
-                        var row = document.createElement("tr");
-                        row.innerHTML = "<th>" + key + "</th><td>" + val + "</th>";
-                        responseHeaders.appendChild(row);
                     });
+
+                    // additional processing of some response headers
+                    if (Math.floor(req.status / 100) === 2) {
+                        // etag
+                        etag = req.getResponseHeader("etag");
+
+                        // content-type
+                        var ctype = req.getResponseHeader("content-type");
+                        if (ctype) {
+                            updateCtypeSelect(ctype.split(";", 1)[0]);
+                        }
+                    }
                 } else if (req.readyState === 4) {
                     document.title = "REST Console - " + addressbar.value;
                     response.classList.remove("loading");
