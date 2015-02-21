@@ -134,11 +134,13 @@
                         if (/location/i.test(key) || /link/i.test(key)) {
                             val = '<a href="' + val + '">' + val + '</a>';
                         }
-                        if (/etag/i.test(key)) {
-                            etag = val;
-                        }
-                        if (/content-type/i.test(key)) {
-                            updateCtypeSelect(val.split(";", 1)[0]);
+                        if (Math.floor(req.status / 100) === 2) {
+                            if (/etag/i.test(key)) {
+                                etag = val;
+                            }
+                            if (/content-type/i.test(key)) {
+                                updateCtypeSelect(val.split(";", 1)[0]);
+                            }
                         }
                         var row = document.createElement("tr");
                         row.innerHTML = "<th>" + key + "</th><td>" + val + "</th>";
