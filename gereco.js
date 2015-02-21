@@ -170,7 +170,7 @@
         }
 
         function interceptLinks (evt) {
-            if (evt.target.nodeName === "A") {
+            if (evt.target.nodeName === "A" && !evt.ctrlKey) {
                 evt.preventDefault();
                 addressbar.value = evt.target.href;
                 sendRequest({ forceget: true });
