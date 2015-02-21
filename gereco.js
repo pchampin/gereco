@@ -2,7 +2,8 @@
 
 (function() {
     window.addEventListener("load", function() {
-        var addressbar = document.getElementById("addressbar"),
+        var base = document.getElementsByTagName("base")[0],
+            addressbar = document.getElementById("addressbar"),
             methodCombo = document.getElementById("method"),
             methodInput = methodCombo.children[0],
             methodSelect = methodCombo.children[1],
@@ -58,7 +59,6 @@
                 } else if (options[i].value === "custom") {
                     ctypeSelect.selectedIndex = i;
                     ctypeInput.value = newCtype;
-                    console.log(ctypeInput.value);
                 }
             }
             updateCombo({ target: ctypeSelect });
@@ -83,6 +83,7 @@
             var req = new XMLHttpRequest(),
                 method = methodInput.value || "GET",
                 url = addressbar.value;
+            base.href = addressbar.value;
             url = url.split("#", 1)[0];
             if (method === "GET" || method === "HEAD") {
                 // use JQuery hack to prevent cache
@@ -110,9 +111,10 @@
                 }
                 catch(err) {
                     if (err.name !== "SecurityError") throw err;
-                    console.log("SecurityError prevented to pushState REST Console " +
-                                addressbar.value);
-                    // TODO is this ok or should we manage history more cleverly?
+                    // if this is just a SecurityError, then pushState with "safe" URL
+                    var newUrl = String(window.location).split("#", 1)[0];
+                    newUrl += "#" + addressbar.value ;
+                    window.history.pushState({}, newUrl, newUrl);
                 }
             }
             response.textContent = "";
@@ -143,7 +145,7 @@
                         responseHeaders.appendChild(row);
                     });
                 } else if (req.readyState === 4) {
-                    document.title = "REST Console - " + window.location;
+                    document.title = "REST Console - " + addressbar.value;
                     response.classList.remove("loading");
                     if (Math.floor(req.status / 100) === 2) {
                         response.classList.remove("error");
@@ -173,10 +175,18 @@
             }
         }
 
+        function updateAddressBar() {
+            if (window.location.hash) {
+                addressbar.value = window.location.hash.substr(1);
+            } else {
+                addressbar.value = window.location;
+            }
+        }
+
         // add event listeners
 
         window.addEventListener("popstate", function(e) {
-            addressbar.value = window.location;
+            updateAddressBar();
             sendRequest({ forceget: true, poppingState: true });
         });        
 
@@ -209,10 +219,12 @@
 
         // do immediately on load
 
-        addressbar.value = window.location;
+        updateAddressBar();
         updateCombo({ target: methodSelect });
         updateCombo({ target: ctypeSelect });
         sendRequest({ forceget: true });
+
+        
 
     });
 })();
