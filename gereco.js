@@ -164,7 +164,9 @@
                     if (Math.floor(req.status / 100) === 2) {
                         response.classList.remove("error");
                         response.textContent = req.responseText;
-                        enhanceResponse(req);
+                        if (req.responseText.length < 1000000) {
+                            enhanceResponse(req);
+                        }
                     } else {
                         response.classList.add("error");
                         if (req.statusText) {
