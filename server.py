@@ -151,7 +151,7 @@ DUMMY_DATA = {
         <prop3 href=".." />
     </data>\n""",
     "text/html": open('index.html').read(),
-    "x-gereco/test": """
+    "x-gereco/test": """<!DOCTYPE>
 <html>
   <head>
     <title>x-gereco test</title>
@@ -161,13 +161,14 @@ DUMMY_DATA = {
   <body>
     <p>This text should be green</p>
     <pre id="response" class="error">This should be formatted as an error, following the current Gereco theme, which should be imported inside the iframe.</pre>
+    <a target="_new" href="https://github.com/pchampin/gereco">External link</a>
   </body>
 </html>
     """,
 }
 
 def echo(environ, start_response):
-        content_length = int(environ.get('CONTENT_LENGTH', '0'))
+        content_length = int(environ.get('CONTENT_LENGTH') or '0')
         body = environ['wsgi.input'].read(content_length)
 
         start_response('200 Ok', [
