@@ -43,6 +43,8 @@
             if (/json/.test(ctype) || /html/.test(ctype) || /xml/.test(ctype)) {
                 html = html.replace(/""/g, '<a href="">""</a>');
                 html = html.replace(/"([^">\n]+)"/g, '"<a href="$1">$1</a>"');
+            } else if (/text\/uri-list/.test(ctype)) {
+                html = html.replace(/^.*$/gm, '<a href="$&">$&</a>');
             } else {
                 html = html.replace(/&lt;&gt;/g, '<a href="">&lt;&gt;</a>');
                 html = html.replace(/&lt;([^\n]+?)&gt;/g, '&lt;<a href="$1">$1</a>&gt;');
