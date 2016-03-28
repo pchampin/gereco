@@ -219,7 +219,10 @@
         }
 
         function interceptLinks (evt) {
-            if (evt.target.nodeName === "A" && !evt.ctrlKey) {
+            if (evt.target.nodeName === "A" &&
+                  !evt.ctrlKey &&
+                  !evt.target.download &&
+                  (!evt.target.target || evt.target.target === '_self')) {
                 evt.preventDefault();
                 addressbar.value = evt.target.href;
                 sendRequest({ forceget: true });
