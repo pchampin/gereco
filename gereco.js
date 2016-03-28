@@ -88,9 +88,17 @@
             }
             req.open(method, url);
             req.setRequestHeader("cache-control", "private;no-cache");
-            req.setRequestHeader("accept",
-                                 ctypeInput.value
-                                 + ",application/json;q=0.5,*/*;q=0.1");
+
+            var accept = "application/json;q=0.8,*/*;q=0.1";
+            if (sessionStorage.lastAcceptedCType) {
+                accept = sessionStorage.lastAcceptedCType + ';q=0.9,' + accept;
+            }
+            if (ctypeInput.value && ctypeInput.value !== '*/*') {
+                sessionStorage.lastAcceptedCType = ctypeInput.value;
+                accept = ctypeInput.value + ',' + accept;
+            }
+            req.setRequestHeader("accept", accept);
+
             if (method !== "GET") {
                 req.setRequestHeader("content-type", ctypeInput.value);
             }
@@ -165,9 +173,32 @@
                     response.classList.remove("loading");
                     if (Math.floor(req.status / 100) === 2) {
                         response.classList.remove("error");
-                        response.textContent = req.responseText;
-                        if (req.responseText.length < 1000000) {
-                            enhanceResponse(req);
+                        response.innerHTML = "";
+                        if (req.getResponseHeader("content-type").startsWith('x-gereco') &&
+                              // only trust x-gereco/* mime-types if they come from the same server
+                              addressbar.value === window.location.toString()) {
+                            var iframe = document.createElement('iframe');
+                            iframe.seamless = true;
+                            iframe.scrolling = "no";
+                            iframe.onload = function() {
+                                var ifdoc = iframe.contentDocument;
+                                iframe.style.height = (ifdoc.body.scrollHeight+32) + 'px';
+                                iframe.style.width = (ifdoc.body.scrollWidth+32) + 'px';
+                                var theme = document.querySelector('style#theme');
+                                ifdoc.head.insertBefore(
+                                    theme.cloneNode(true),
+                                    ifdoc.head.children[0]
+                                );
+
+                                ifdoc.body.addEventListener("click", interceptLinks);
+                            };
+                            iframe.srcdoc = req.responseText;
+                            response.appendChild(iframe);
+                        } else {
+                            response.textContent = req.responseText;
+                            if (req.responseText.length < 1000000) {
+                                enhanceResponse(req);
+                            }
                         }
                     } else {
                         response.classList.add("error");
@@ -213,7 +244,7 @@
                 sendRequest();
             }
         });
-        
+
         addressbar.addEventListener("keypress", function(evt) {
             if (evt.keyCode === 13) { // enter
                 sendRequest({ forceget: true });
@@ -241,8 +272,6 @@
         updateCombo({ target: methodSelect });
         updateCombo({ target: ctypeSelect });
         sendRequest({ forceget: true });
-
-        
 
     });
 })();
