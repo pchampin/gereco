@@ -221,7 +221,7 @@
         function interceptLinks (evt) {
             if (evt.target.nodeName === "A" &&
                   !evt.ctrlKey &&
-                  !evt.target.download &&
+                  (evt.target.download === undefined) &&
                   (!evt.target.target || evt.target.target === '_self')) {
                 evt.preventDefault();
                 addressbar.value = evt.target.href;
