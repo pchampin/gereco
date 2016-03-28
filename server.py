@@ -161,6 +161,7 @@ DUMMY_DATA = {
   <body>
     <p>This text should be green</p>
     <pre id="response" class="error">This should be formatted as an error, following the current Gereco theme, which should be imported inside the iframe.</pre>
+    <a href="foo/bar">Internal link</a>
     <a target="_new" href="https://github.com/pchampin/gereco">External link</a>
   </body>
 </html>
