@@ -13,8 +13,12 @@
             send = document.getElementById("send"),
             payload = document.getElementById("payload"),
             response = document.getElementById("response"),
+            loading = document.getElementById("loading"),
+            error = document.getElementById("error"),
             responseHeaders = document.getElementById("response-headers"),
-            etag = null;
+            etag = null,
+            req = null,
+            enhancing = null;
 
         // define functions
 
@@ -37,19 +41,23 @@
             }
         }
 
-        function enhanceResponse(req) {
-            var ctype = req.getResponseHeader("content-type");
-            var html = response.innerHTML;
-            if (/json/.test(ctype) || /html/.test(ctype) || /xml/.test(ctype)) {
-                html = html.replace(/""/g, '<a href="">""</a>');
-                html = html.replace(/"([^">\n]+)"/g, '"<a href="$1">$1</a>"');
-            } else if (/text\/uri-list/.test(ctype)) {
-                html = html.replace(/^.*$/gm, '<a href="$&">$&</a>');
-            } else {
-                html = html.replace(/&lt;&gt;/g, '<a href="">&lt;&gt;</a>');
-                html = html.replace(/&lt;([^\n]+?)&gt;/g, '&lt;<a href="$1">$1</a>&gt;');
+        function enhanceContent(elements, ctype, i) {
+            enhancing = null;
+            if (i < elements.length) {
+                var elt = elements[i];
+                var html = elt.innerHTML;
+                if (/json/.test(ctype) || /html/.test(ctype) || /xml/.test(ctype)) {
+                    html = html.replace(/""/g, '<a href="">""</a>');
+                    html = html.replace(/"([^">\n]+)"/g, '"<a href="$1">$1</a>"');
+                } else if (/text\/uri-list/.test(ctype)) {
+                    html = html.replace(/^.*$/gm, '<a href="$&">$&</a>');
+                } else {
+                    html = html.replace(/&lt;&gt;/g, '<a href="">&lt;&gt;</a>');
+                    html = html.replace(/&lt;([^\n]+?)&gt;/g, '&lt;<a href="$1">$1</a>&gt;');
+                }
+                elt.innerHTML = html;
+                enhancing = setTimeout(enhanceContent.bind(self, elements, ctype, i+1), 0);
             }
-            response.innerHTML = html;
         }
 
         function updateCtypeSelect(newCtype) {
@@ -74,7 +82,11 @@
                 methodSelect.selectedIndex = 0;
                 updateCombo({ target: methodSelect });
             }
-            var req = new XMLHttpRequest(),
+            if (req !== null) {
+                req.abort();
+                console.log("aborting previous request");
+            }
+            req = new XMLHttpRequest(),
                 method = methodInput.value || "GET",
                 url = addressbar.value;
             base.href = addressbar.value;
@@ -121,14 +133,22 @@
                     window.history.pushState({}, newUrl, newUrl);
                 }
             }
+            if (enhancing !== null) {
+                //clearTimeout(enhancing);
+            }
             response.textContent = "";
+            response.appendChild(loading);
+            response.appendChild(error);
             response.classList.remove("error");
             response.classList.add("loading");
-            response.textContent = "loading...";
             responseHeaders.innerHTML = "";
+            var oldLength = 0;
+            var ctype;
+            var remaining = "";
 
             req.onreadystatechange = function() {
                 if (req.readyState === 2) {
+                    //console.log("received header");
 
                     // display response headers
                     req.getAllResponseHeaders().split("\n").forEach(function(rh) {
@@ -163,19 +183,39 @@
                         etag = req.getResponseHeader("etag");
 
                         // content-type
-                        var ctype = req.getResponseHeader("content-type");
+                        ctype = req.getResponseHeader("content-type");
                         if (ctype) {
                             updateCtypeSelect(ctype.split(";", 1)[0]);
                         }
                     }
                 } else if (req.readyState === 3) {
-                    response.textContent = req.responseText;
+                    //console.log("received content part");
+                    remaining += req.responseText.substr(oldLength);
+                    oldLength = req.responseText.length;
+                    var lines = remaining.split('\n');
+                    if (lines.length && remaining[-1] !== '\n') {
+                        remaining = lines.pop(-1);
+                    } else {
+                        remaining = "";
+                    }
+                    for (var i=0; i<lines.length; i+=1) {
+                        var line = lines[i];
+                        var span = document.createElement('span');
+                        span.textContent = line + '\n';
+                        response.appendChild(span);
+                    }
                 } else if (req.readyState === 4) {
+                    //console.log("received end of response");
+                    if (remaining) {
+                        var span = document.createElement('span');
+                        span.textContent = remaining;
+                        response.appendChild(span);
+                    }
+                    enhanceContent(response.children, ctype, 0);
                     document.title = "REST Console - " + addressbar.value;
                     response.classList.remove("loading");
                     if (Math.floor(req.status / 100) === 2) {
                         response.classList.remove("error");
-                        response.innerHTML = "";
                         if (req.getResponseHeader("content-type").startsWith('x-gereco') &&
                               // only trust x-gereco/* mime-types if they come from the same server
                               addressbar.value === window.location.toString()) {
@@ -196,22 +236,18 @@
                             };
                             iframe.srcdoc = req.responseText;
                             response.appendChild(iframe);
-                        } else {
-                            response.textContent = req.responseText;
-                            if (req.responseText.length < 1000000) {
-                                enhanceResponse(req);
-                            }
                         }
                     } else {
                         response.classList.add("error");
                         if (req.statusText) {
-                            response.textContent =
+                            error.textContent =
                                 req.status + " " + req.statusText + "\n\n" +
                                 req.responseText;
                         } else {
-                            response.textContent = "Can not reach " + addressbar.value;
+                            error.textContent = "Can not reach " + addressbar.value;
                         }
                     }
+                    req = null;
                 }
             };
             if (payload.disabled) req.send();
