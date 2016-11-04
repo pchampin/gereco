@@ -12,14 +12,14 @@
 }
 
 
-.combo input:disabled ,
-.combo input:enabled + select
-{
-    width: 0;
-}
 .combo input:disabled
 {
+    width: 0;
     opacity: 0;
+}
+.combo input:enabled + select
+{
+    width: .5em;
 }
 
 #method input:enabled ,
