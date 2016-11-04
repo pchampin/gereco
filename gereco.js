@@ -148,7 +148,7 @@
 
             req.onreadystatechange = function() {
                 if (req.readyState === 2) {
-                    console.log("received header");
+                    //console.log("received header");
 
                     // display response headers
                     req.getAllResponseHeaders().split("\n").forEach(function(rh) {
@@ -189,8 +189,7 @@
                         }
                     }
                 } else if (req.readyState >= 3) {
-                    console.log("state changed: ", req.readyState);
-                    console.log("received content part: " + req.responseText.substr(oldLength));
+                    //console.log("received content part: " + req.responseText.substr(oldLength));
                     remaining += req.responseText.substr(oldLength);
                     oldLength = req.responseText.length;
                     var lines = remaining.split('\n');
@@ -207,7 +206,7 @@
                     }
 
                     if (req.readyState === 4) {
-                        console.log("received end of response");
+                        //console.log("received end of response");
                         if (remaining) {
                             var span = document.createElement('span');
                             span.textContent = remaining;
