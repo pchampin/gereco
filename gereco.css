@@ -54,11 +54,3 @@
 #response iframe {
   border: none;
 }
-
-#loading, #error {
-  display: none;
-}
-
-.loading #loading, .error #error {
-  display: block
-}

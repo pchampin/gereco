@@ -14,7 +14,6 @@
             payload = document.getElementById("payload"),
             response = document.getElementById("response"),
             loading = document.getElementById("loading"),
-            error = document.getElementById("error"),
             responseHeaders = document.getElementById("response-headers"),
             etag = null,
             req = null,
@@ -137,10 +136,9 @@
                 //clearTimeout(enhancing);
             }
             response.textContent = "";
-            response.appendChild(loading);
-            response.appendChild(error);
             response.classList.remove("error");
             response.classList.add("loading");
+            response.appendChild(loading);
             responseHeaders.innerHTML = "";
             var oldLength = 0;
             var ctype;
@@ -212,9 +210,10 @@
                             span.textContent = remaining;
                             response.appendChild(span);
                         }
-                        enhanceContent(response.children, ctype, 0);
-                        document.title = "REST Console - " + addressbar.value;
                         response.classList.remove("loading");
+                        response.removeChild(loading);
+                        document.title = "REST Console - " + addressbar.value;
+                        enhanceContent(response.children, ctype, 0);
                         if (Math.floor(req.status / 100) === 2) {
                             response.classList.remove("error");
                             if (req.getResponseHeader("content-type").startsWith('x-gereco') &&
@@ -241,11 +240,11 @@
                         } else {
                             response.classList.add("error");
                             if (req.statusText) {
-                                error.textContent =
+                                response.textContent =
                                     req.status + " " + req.statusText + "\n\n" +
                                     req.responseText;
                             } else {
-                                error.textContent = "Can not reach " + addressbar.value;
+                                response.textContent = "Can not reach " + addressbar.value;
                             }
                         }
                         req = null;
