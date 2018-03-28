@@ -162,14 +162,12 @@
                         th.textContent = key;
 
                         // custom presentation of some header fields
-                        if (/location/i.test(key) || /link/i.test(key)) {
+                        if (/location/i.test(key)) {
                             var linka = td.appendChild(document.createElement("a"));
-                            if (val[0] === "<") {
-                                linka.href = val.substr(1).split(">", 1)[0];
-                            } else {
-                                linka.href = val;
-                            }
+                            linka.href = val;
                             linka.textContent = val;
+                        } else if (/link/i.test(key)) {
+                            makeLinksIn(td, val);
                         } else {
                             td.textContent = val;
                         }
@@ -274,12 +272,29 @@
             }
         }
 
+        function makeLinksIn(td, links) {
+          var ul = td.appendChild(document.createElement("ul"));
+          var li = null;
+          // the split below is not absolutely robust, but it should work in most cases
+          for (link of links.substr(1).split(/, *</)) {
+            if (li) { li.appendChild(document.createTextNode(",")); }
+            li = ul.appendChild(document.createElement("li"));
+            li.appendChild(document.createTextNode("<"));
+            var cutpoint = link.search(">");
+            var url = link.substr(0, cutpoint);
+            var a = li.appendChild(document.createElement("a"));
+            a.href = url;
+            a.textContent = url;
+            li.appendChild(document.createTextNode(link.substr(cutpoint)));
+          }
+        }
+
         // add event listeners
 
         window.addEventListener("popstate", function(e) {
             updateAddressBar();
             sendRequest({ forceget: true, poppingState: true });
-        });        
+        });
 
         window.addEventListener("keydown", function(evt) {
             if (evt.keyCode === 13 && evt.ctrlKey) { // ctrl+enter
