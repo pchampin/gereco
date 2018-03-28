@@ -99,6 +99,7 @@
                     url += "?" + uncache;
                 }
             }
+            req.withCredentials = true;
             req.open(method, url);
             req.setRequestHeader("cache-control", "private;no-cache");
 
