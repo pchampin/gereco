@@ -101,7 +101,6 @@
             }
             req.withCredentials = true;
             req.open(method, url);
-            req.setRequestHeader("cache-control", "private;no-cache");
 
             var accept = "application/json;q=0.8,*/*;q=0.1";
             if (sessionStorage.lastAcceptedCType) {
