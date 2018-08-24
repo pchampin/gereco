@@ -23,4 +23,16 @@
 
 #response-headers th {
     text-align: left;
+    vertical-align: top;
+}
+
+#response-headers ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#response-headers th, #response-headers td {
+  font-family: monospace;
+  border-top: thin solid lightGray;
 }
