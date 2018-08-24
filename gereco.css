@@ -11,36 +11,37 @@
     transition: all .3s;
 }
 
-
 .combo input:disabled
 {
-    width: 0;
     opacity: 0;
-}
-.combo input:enabled + select
-{
-    width: .5em;
+    width: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
-#method input:enabled ,
-#method input:disabled + select
+#method input:enabled,
+#method select
 {
     width: 6em;
 }
 
-#ctype input:enabled ,
-#ctype input:disabled + select
+#ctype input:enabled,
+#ctype select
 {
     width: 12em;
 }
 
-#payload {
+#payload, #payload + .toolbar {
     transition: all .5s;
     width: 100%;
-    height: 20em;
 }
 
-#payload:disabled {
+#payload {
+  height: 20em;
+}
+
+#payload:disabled, #payload:disabled + .toolbar {
     height: 0;
     opacity: 0;
 }
