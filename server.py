@@ -139,7 +139,7 @@ def extract_accepted_ctype(accept):
     
 
 DUMMY_DATA = {
-    "text/uri-list": "http://localhost:12345/foo\nhttp://localhost:12345/bar\n",
+    "text/uri-list": "http://localhost:3000/foo\nhttp://localhost:3000/bar\n",
     "application/json": """    {
         "prop1": "foo",
         "prop2": "bar/baz",
@@ -186,7 +186,7 @@ def echo(environ, start_response):
 
 from wsgiref.simple_server import make_server
 HOST = 'localhost'
-PORT = 12345
+PORT = 3000
 SERVER = make_server(HOST, PORT, application)
 print("Listening on http://{}:{}/ ...".format(HOST, PORT))
 SERVER.serve_forever()
