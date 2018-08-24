@@ -15,6 +15,8 @@
             response = document.getElementById("response"),
             loading = document.getElementById("loading"),
             responseHeaders = document.getElementById("response-headers"),
+            tohjson = document.getElementById("tohjson"),
+            fromhjson = document.getElementById("fromhjson"),
             etag = null,
             req = null,
             enhancing = null;
@@ -322,6 +324,15 @@
         response.addEventListener("click", interceptLinks);
         responseHeaders.addEventListener("click", interceptLinks);
 
+        tohjson.addEventListener("click", function(evt) {
+            var data = Hjson.parse(payload.value);
+            payload.value = Hjson.stringify(data);
+        });
+
+        fromhjson.addEventListener("click", function(evt) {
+            var data = Hjson.parse(payload.value);
+            payload.value = JSON.stringify(data, null, 2);
+        });
 
         // do immediately on load
 

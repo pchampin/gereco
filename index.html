@@ -46,6 +46,11 @@
     </div>
 
     <textarea id="payload" disabled=""></textarea>
+    <div class="toolbar hjson-toolbar">
+      <button id="tohjson">Json → Hjson</button>
+      <button id="fromhjson">Hjson → Json</button>
+      <a href="https://hjson.org/">Hjson?</a>
+    </div>
 
     <pre id="response">
       <span id="loading">loading...</span>
@@ -53,7 +58,9 @@
 
     <table id="response-headers"></table>
 
-    <script type="application/javascript" 
+    <script type="application/javascript" async
+            src="hjson.min.js"></script>
+    <script type="application/javascript" async
             src="gereco.js"></script>
 
   </body>
