@@ -15,6 +15,7 @@
             response = document.getElementById("response"),
             loading = document.getElementById("loading"),
             responseHeaders = document.getElementById("response-headers"),
+            hjsonToolbar = document.getElementById("hjson-toolbar"),
             tohjson = document.getElementById("tohjson"),
             fromhjson = document.getElementById("fromhjson"),
             etag = null,
@@ -323,6 +324,22 @@
         send.addEventListener("click", sendRequest);
         response.addEventListener("click", interceptLinks);
         responseHeaders.addEventListener("click", interceptLinks);
+
+        // H-Json
+
+        function checkHjson() {
+            console.debug("checkHjson");
+            if (ctypeInput.value.search(/json/) != -1 && !payload.disabled) {
+                hjsonToolbar.style.display = "inline-block";
+            } else {
+                hjsonToolbar.style.display = "none";
+            }
+        }
+
+        ctypeInput.addEventListener('input', checkHjson);
+        ctypeSelect.addEventListener('change', checkHjson);
+        methodInput.addEventListener('input', checkHjson);
+        methodSelect.addEventListener('change', checkHjson);
 
         tohjson.addEventListener("click", function(evt) {
             var data = Hjson.parse(payload.value);

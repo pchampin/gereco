@@ -14,7 +14,7 @@
   <body>
 
     <input id="addressbar" />
-    <div>
+    <div class="toolbar">
 
       <span id="method" class="combo"
         ><input placeholder="GET" disabled="" /
@@ -43,14 +43,14 @@
 
       <button id="send">Send</button>
 
+      <div class="subtoolbar" id="hjson-toolbar">
+        <button id="tohjson">Json → Hjson</button>
+        <button id="fromhjson">Hjson → Json</button>
+        <a href="https://hjson.org/"><abbr title="HJson ?">⍰</abbr></a>
+      </div>
     </div>
 
     <textarea id="payload" disabled=""></textarea>
-    <div class="toolbar hjson-toolbar">
-      <button id="tohjson">Json → Hjson</button>
-      <button id="fromhjson">Hjson → Json</button>
-      <a href="https://hjson.org/">Hjson?</a>
-    </div>
 
     <pre id="response">
       <span id="loading">loading...</span>
