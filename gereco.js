@@ -328,11 +328,10 @@
         // H-Json
 
         function checkHjson() {
-            console.debug("checkHjson");
             if (ctypeInput.value.search(/json/) != -1 && !payload.disabled) {
-                hjsonToolbar.style.display = "inline-block";
+                hjsonToolbar.classList.remove("hidden");
             } else {
-                hjsonToolbar.style.display = "none";
+                hjsonToolbar.classList.add("hidden");
             }
         }
 
